@@ -1,0 +1,40 @@
+<div class="panel panel-primary" ng-controller="synonymsListCtrl as ctrl">
+	<div class="panel-heading">
+		<h3 class="panel-title">{{ ctrl.word }}</h3>
+	</div>
+
+	<div class="panel-body">
+		<p>
+			Geben Sie hier die Liste der gewünschten Synonymen für <strong>{{ ctrl.word }}</strong> ein:
+		</p>
+		<div class="col-md-6">
+			<form class="form-inline">
+				<div class="form-group">
+					<label class="sr-only" for="newWord">Neues Synonym</label>
+					<div class="input-group">
+						<div class="input-group-addon">
+							Neues Synonym:
+						</div>
+						<input type="text" class="form-control" ng-model="ctrl.newSynonym" placeholder="Neues Synonym">
+					</div>
+				</div>
+				<button type="submit" class="btn btn-primary" ng-click="ctrl.addSynonym()">
+					Hinzufügen
+				</button>
+			</form>
+		</div>
+		<div class="col-md-6">
+			<button class="btn btn-danger" ng-click="ctrl.removeWord()">
+				<span class="glyphicon glyphicon-trash"></span> Löschen
+			</button>
+		</div>
+	</div>
+	<ul class="list-group" ng-repeat="synonym in ctrl.synonymsList[ctrl.word]">
+		<li class="list-group-item">
+					<a href="" ng-click="ctrl.removeSynonym(synonym)">
+						<span class="glyphicon glyphicon-trash"></span>
+					</a> 
+					{{ synonym }} 
+		</li>
+	</ul>
+</div>
