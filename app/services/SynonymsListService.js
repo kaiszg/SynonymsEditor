@@ -1,85 +1,85 @@
 var app = angular.module('synonymsEditor');
 
-app.factory('SynonymsList', ['ElasticsearchService', '$log', function(ElasticsearchService, $log) {
+app.factory('SynonymsList', ['ElasticsearchService', '$log',
+function(ElasticsearchService, $log) {
 	var synonymsList = [];
 	var wordsList = [];
-	
-	var stemmedSynonymsList =[];
+
+	var stemmedSynonymsList = [];
 	var stemmedWordsList = [];
-	
+
 	return {
-		addWord: addWord,
-		addSynonym: addSynonym,
-		getSynonymsList: getSynonymsList,
-		getWordsList: getWordsList,
+		addWord : addWord,
+		addSynonym : addSynonym,
+		getSynonymsList : getSynonymsList,
+		getWordsList : getWordsList,
 		getStemmedSynonymsList : getStemmedSynonymsList,
-		getStemmedWordsList: getStemmedWordsList,
-		getStemmedWord: getStemmedWord,
-		removeWord: removeWord,
-		removeSynonym: removeSynonym
+		getStemmedWordsList : getStemmedWordsList,
+		getStemmedWord : getStemmedWord,
+		removeWord : removeWord,
+		removeSynonym : removeSynonym
 	};
-	
-	function addWord(word){
-		wordsList.push(word);
-		synonymsList[word] = [];
-		ElasticsearchService.getStemmedWord(word).then(function(response){
+
+	function addWord(word) {
+		ElasticsearchService.getStemmedWord(word).then(function(response) {
 			stemmedWordsList.push(response.data.tokens[0].token);
 			stemmedSynonymsList[response.data.tokens[0].token] = [];
+			synonymsList[word] = [];
+			wordsList.push(word);
 		});
 	}
-	
-	function addSynonym(word, synonym){
-		synonymsList[word].push(synonym);
+
+	function addSynonym(word, synonym) {
 		var position = wordsList.indexOf(word);
-		ElasticsearchService.getStemmedWord(synonym).then(function(response){
+		ElasticsearchService.getStemmedWord(synonym).then(function(response) {
 			stemmedSynonymsList[stemmedWordsList[position]].push(response.data.tokens[0].token);
+			synonymsList[word].push(synonym);
 		});
 	}
-	
-	function getStemmedSynonymsList(){
+
+	function getStemmedSynonymsList() {
 		return stemmedSynonymsList;
 	}
-	
-	function getStemmedWordsList(){
+
+	function getStemmedWordsList() {
 		return stemmedWordsList;
 	}
-	
-	function getSynonymsList(){
+
+	function getSynonymsList() {
 		return synonymsList;
 	}
-	
-	function getWordsList(){
+
+	function getWordsList() {
 		return wordsList;
 	}
-	
-	function getStemmedWord(word){
+
+	function getStemmedWord(word) {
 		var position = wordsList.indexOf(word);
 		return stemmedWordsList[position];
 	}
-	
-	function removeWord(word){
+
+	function removeWord(word) {
 		var position = wordsList.indexOf(word);
-		if(position > -1){
+		if (position > -1) {
 			wordsList.splice(position, 1);
 			synonymsList.splice(position, 1);
 			stemmedSynonymsList.splice(position, 1);
 			stemmedWordsList.splice(position, 1);
-		}
-		else{
+		} else {
 			$log.error("Word not found!");
 		}
 	}
-	
-	function removeSynonym(word, synonym){
+
+	function removeSynonym(word, synonym) {
 		var posWord = wordsList.indexOf(word);
 		var posSynonym = synonymsList[word].indexOf(synonym);
 		var stemmedWord = stemmedWordsList[posWord];
-		if((posSynonym > -1)&&(posWord > -1)){
+		if ((posSynonym > -1) && (posWord > -1)) {
 			synonymsList[word].splice(posSynonym, 1);
 			stemmedSynonymsList[stemmedWord].splice(posSynonym, 1);
-		}
-		else{
+		} else {
 			$log.error("Synonym not found!");
 		}
 	}
-}]);
+
+}]); 
