@@ -24,6 +24,7 @@ angular.module('synonymsEditor.synonymsList', ['ngRoute'])
 		
 		self.removeWord = function(){
 			SynonymsList.removeWord(self.word);
+			$location.path('/#!/words-list');
 		}
 		
 		self.removeSynonym = function(synonym){
